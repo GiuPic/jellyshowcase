@@ -1,0 +1,34 @@
+# Only used for feature release
+release/
+# Ignore all dot folders and files except .github/workflows
+!.github/workflows/
+# Copilot agent instructions and commands
+.github/agents/
+.github/commands/
+.github/*.*
+bin/
+obj/
+debug/
+# User-specific files
+*.user*
+*.suo
+*.rsuser
+log/
+logs/
+# Visual Studio cache/options directory
+*.vs*
+Generated Files/
+# Codebase directory with reference materials
+codebase/
+# GitHub token file (contains sensitive data)
+github-token.txt
+# Temporary files from conversion scripts
+temp/
+# Personal todo files
+.todo
+.copilot/
+.cursor/
+*.obj
+*.pdb
+*.tmp
+*.log

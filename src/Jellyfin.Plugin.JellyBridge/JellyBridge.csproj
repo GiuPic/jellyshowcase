@@ -1,0 +1,122 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Latest full release Jellyfin version -->
+    <JellyfinVersion>10.11.11</JellyfinVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Jellyfin.Plugin.JellyBridge</RootNamespace>
+    <AssemblyVersion>4.0.10.7</AssemblyVersion>
+    <FileVersion>4.0.10.7</FileVersion>
+  </PropertyGroup>
+
+  <!-- Normalize JellyfinVersion to specific NuGet versions -->
+  <PropertyGroup>
+    <_Major>$(JellyfinVersion.Split('.')[0])</_Major>
+    <_Minor>$(JellyfinVersion.Split('.')[1])</_Minor>
+    <_Patch>$(JellyfinVersion.Split('.')[2])</_Patch>
+  </PropertyGroup>
+  <!-- Set normalized JellyfinVersion based on required shims -->
+  <PropertyGroup>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.StartsWith('12.'))">12.0</JellyfinVersionFlag>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.StartsWith('10.11.'))">10.11.3</JellyfinVersionFlag>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.Equals('10.11.0'))">10.11.0</JellyfinVersionFlag>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.Equals('10.11.1'))">10.11.0</JellyfinVersionFlag>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.Equals('10.11.2'))">10.11.0</JellyfinVersionFlag>
+    <JellyfinVersionFlag Condition="$(JellyfinVersion.StartsWith('10.10.'))">10.10.7</JellyfinVersionFlag>
+    <!-- Default to v10.11.3+ -->
+    <JellyfinVersionFlag Condition="'$(JellyfinVersionFlag)' == ''">10.11.3</JellyfinVersionFlag>
+  </PropertyGroup>
+
+  <!-- Set TargetFramework using 9.0 as default -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework Condition="$(JellyfinVersionFlag.StartsWith('12.'))">net10.0</TargetFramework>
+    <TargetFramework Condition="$(JellyfinVersionFlag.StartsWith('10.11.'))">net9.0</TargetFramework>
+    <TargetFramework Condition="$(JellyfinVersionFlag.StartsWith('10.10.'))">net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- Define conditional compilation symbols based on Jellyfin version -->
+  <!-- For all versions BEFORE a certain version, use pre-compiler shim "if !VERSION", and after use "#if VERSION" -->
+  <PropertyGroup>
+    <OutputPath>$(MSBuildProjectDirectory)\..\..\bin\$(Configuration)\$(JellyfinVersion)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <JELLYFIN_12>true</JELLYFIN_12>
+    <JELLYFIN_10_11_3>true</JELLYFIN_10_11_3>
+    <JELLYFIN_10_11>true</JELLYFIN_10_11>
+    <JELLYFIN_10_10>true</JELLYFIN_10_10>
+  </PropertyGroup>
+  <!-- Release Candidate 12.0-RC# changes to two digit version -->
+  <PropertyGroup Condition="'$(JellyfinVersionFlag)' == '12.0'">
+    <DefineConstants>$(DefineConstants);JELLYFIN_10_10;JELLYFIN_10_11;JELLYFIN_10_11_3;JELLYFIN_12</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(JellyfinVersionFlag)' == '10.11.3'">
+    <DefineConstants>$(DefineConstants);JELLYFIN_10_10;JELLYFIN_10_11;JELLYFIN_10_11_3</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(JellyfinVersionFlag)' == '10.11.0'">
+    <DefineConstants>$(DefineConstants);JELLYFIN_10_10;JELLYFIN_10_11</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(JellyfinVersionFlag)' == '10.10.7'">
+    <DefineConstants>$(DefineConstants);JELLYFIN_10_10</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Package references for Jellyfin packages (using NuGet) -->
+  <ItemGroup>
+    <PackageReference Include="Jellyfin.Model" Version="$(JellyfinVersion)" />
+    <PackageReference Include="Jellyfin.Controller" Version="$(JellyfinVersion)" />
+    <PackageReference Include="Jellyfin.Common" Version="$(JellyfinVersion)" />
+    <PackageReference Include="Jellyfin.Data" Version="$(JellyfinVersion)" />
+  </ItemGroup>
+
+  <Target Name="DebugVersion" BeforeTargets="Build">
+    <Message Importance="High" Text="=== JellyfinVersion=$(JellyfinVersion)" />
+    <Message Importance="High" Text="=== JellyfinVersionFlag=$(JellyfinVersionFlag)" />
+  </Target>
+
+  <!-- Microsoft.Extensions packages for .NET 8.0 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
+  <!-- Microsoft.Extensions packages for .NET 9.0 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.11" />
+  </ItemGroup>
+
+  <!-- Microsoft.Extensions packages for .NET 10.0 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+  </ItemGroup>
+
+  <!-- Common package references -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- Embed all source files and resources into the DLL -->
+  <ItemGroup>
+    <EmbeddedResource Include="**\*"
+                      Exclude="bin\**;obj\**" />
+  </ItemGroup>
+
+</Project>
