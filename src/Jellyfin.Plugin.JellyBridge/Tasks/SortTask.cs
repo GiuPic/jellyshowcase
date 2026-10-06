@@ -27,10 +27,10 @@ public class SortTask : IScheduledTask
         _logger.LogInformation("SortTask constructor called - task initialized");
     }
 
-    public string Name => "JellyBridge Sort";
-    public string Key => "JellyBridgeSort";
+    public string Name => "JellyShowcase Sort";
+    public string Key => "JellyShowcaseSort";
     public string Description => "Sorts discover library by updating play counts for all users";
-    public string Category => "JellyBridge";
+    public string Category => "JellyShowcase";
 
     public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {

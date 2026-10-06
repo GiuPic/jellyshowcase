@@ -35,13 +35,13 @@ namespace Jellyfin.Plugin.JellyBridge.Controllers
                 var isRunning = Plugin.IsOperationRunning;
                 
                 // Try to get the scheduled task workers (used only for progress and nextRun interval)
-                var syncTaskWrapper = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeSync");
+                var syncTaskWrapper = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseSync");
                 DateTimeOffset? lastRun;
                 DateTimeOffset? nextRun;
                 string? lastRunSource; // "Scheduled" or "Startup"
 
                 // Determine last run from TaskManager: consider scheduled and startup tasks
-                var startupTaskWrapper = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeStartup");
+                var startupTaskWrapper = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseStartup");
 
                 // Config flags
                 var autoSyncOnStartupEnabled = Plugin.GetConfigOrDefault<bool>(nameof(PluginConfiguration.EnableStartupSync));

@@ -1,5 +1,5 @@
 const JellyBridgeConfigurationPage = {
-    pluginUniqueId: '8ecc808c-d6e9-432f-9219-b638fbfb37e6'
+    pluginUniqueId: '3797d820-4353-4556-9cd9-b43c40777ae9'
 };
 
 export default function (view) {
@@ -71,7 +71,7 @@ function cacheBuster() {
     const config = window.configJellyBridge;
     try {
         const version = config.PluginVersion;
-        const base = Dashboard.getPluginUrl('JellyBridge'); // "configurationpage?name=JellyBridge"
+        const base = Dashboard.getPluginUrl('JellyShowcase'); // "configurationpage?name=JellyShowcase"
         Dashboard.navigate(`${base}&v=${version}`);
     } catch (e) { /* ignore */ }
 }
@@ -81,7 +81,7 @@ function initializePluginHeader(page) {
 
     // Update header legend with plugin version
     if (config.PluginVersion) {
-        page.querySelector('#legend').textContent = `JellyBridge Configuration (plugin version: ${config.PluginVersion})`;
+        page.querySelector('#legend').textContent = `JellyShowcase Configuration (plugin version: ${config.PluginVersion})`;
     }
 
     // Start task status polling

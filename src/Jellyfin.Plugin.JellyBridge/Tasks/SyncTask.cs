@@ -32,10 +32,10 @@ public class SyncTask : IScheduledTask
         _logger.LogInformation("SyncTask constructor called - task initialized");
     }
 
-    public string Name => "JellyBridge Sync";
-    public string Key => "JellyBridgeSync";
+    public string Name => "JellyShowcase Sync";
+    public string Key => "JellyShowcaseSync";
     public string Description => "Syncs discover content from Jellyseerr to Jellyfin and favorites from Jellyfin to Jellyseerr.";
-    public string Category => "JellyBridge";
+    public string Category => "JellyShowcase";
 
     public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {

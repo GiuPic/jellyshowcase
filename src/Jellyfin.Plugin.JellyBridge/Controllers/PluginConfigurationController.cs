@@ -206,9 +206,9 @@ namespace Jellyfin.Plugin.JellyBridge.Controllers
                         // - the scheduled sync task when Enabled/Interval changes
                         // - the startup task when EnableStartupSync changes
                         // - the sort task when SortOrder/SortTaskIntervalHours changes
-                        var syncWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeSync");
-                        var startupWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeStartup");
-                        var sortWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeSort");
+                        var syncWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseSync");
+                        var startupWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseStartup");
+                        var sortWorker = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseSort");
 
                         // Update scheduled sync task triggers only if IsEnabled or SyncInterval changed
                         if (syncTaskChanged && syncWorker != null && syncWorker.ScheduledTask is Tasks.SyncTask syncTask)

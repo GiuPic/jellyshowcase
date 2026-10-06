@@ -27,10 +27,10 @@ public class StartupTask : IScheduledTask
         _taskManager = taskManager;
     }
 
-    public string Name => "JellyBridge Startup";
-    public string Key => "JellyBridgeStartup";
+    public string Name => "JellyShowcase Startup";
+    public string Key => "JellyShowcaseStartup";
     public string Description => "Runs enabled automated tasks on plugin startup (Sync and Sort)";
-    public string Category => "JellyBridge";
+    public string Category => "JellyShowcase";
 
     public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {
@@ -84,7 +84,7 @@ public class StartupTask : IScheduledTask
             // Execute SyncTask if enabled
             if (isSyncEnabled)
             {
-                var syncTask = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeSync");
+                var syncTask = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseSync");
                 if (syncTask?.ScheduledTask is SyncTask task)
                 {
                     _logger.LogTrace("Found SyncTask; executing from startup task");
@@ -104,7 +104,7 @@ public class StartupTask : IScheduledTask
             // Execute SortTask if enabled
             if (isSortEnabled)
             {
-                var sortTask = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyBridgeSort");
+                var sortTask = _taskManager.ScheduledTasks.FirstOrDefault(t => t.ScheduledTask.Key == "JellyShowcaseSort");
                 if (sortTask?.ScheduledTask is SortTask task)
                 {
                     _logger.LogTrace("Found SortTask; executing from startup task");

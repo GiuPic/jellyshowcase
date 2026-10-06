@@ -75,7 +75,7 @@ public class PluginConfiguration : BasePluginConfiguration
         { nameof(CustomSeriesPromo), string.Empty },
         { nameof(DefaultSeriesPromo), true },
         { nameof(PromoVideoDurationSeconds), 10 },
-        { nameof(JellyBridgeTempDirectory), Path.Combine(Path.GetTempPath(), "JellyBridge") },
+        { nameof(JellyBridgeTempDirectory), Path.Combine(Path.GetTempPath(), "JellyShowcase") },
 
         // Sort Discover Content
         { nameof(EnableAutomatedSortTask), false },
