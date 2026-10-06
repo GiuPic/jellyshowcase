@@ -87,17 +87,19 @@ public sealed class ShowcaseArrivalHandler : IHostedService
         // Placeholder folders are named "Title (Year) [tmdbid-123] [imdbid]" for movies and
         // "... [tvdbid]" for shows (TMDB ids of movies and shows overlap, so the suffix matters).
         var suffix = isMovie ? "[imdbid]" : "[tvdbid]";
-        var folders = Directory.EnumerateDirectories(baseDirectory, $"*[[]tmdbid-{tmdbId}[]]*", new EnumerationOptions
+        // .NET search patterns only support * and ?: brackets are literal, so match loosely and filter below.
+        var folders = Directory.EnumerateDirectories(baseDirectory, $"*tmdbid-{tmdbId}]*", new EnumerationOptions
             {
                 RecurseSubdirectories = true,
                 MaxRecursionDepth = 2,
-                MatchType = MatchType.Win32,
             })
             .Where(d => Path.GetFileName(d).Contains($"[tmdbid-{tmdbId}]", StringComparison.Ordinal)
                 && Path.GetFileName(d).EndsWith(suffix, StringComparison.Ordinal));
 
+        var found = false;
         foreach (var folder in folders)
         {
+            found = true;
             var ignorePath = Path.Combine(folder, BridgeService.IgnoreFileName);
             if (File.Exists(ignorePath))
             {
@@ -116,6 +118,11 @@ public sealed class ShowcaseArrivalHandler : IHostedService
             }
 
             _logger.LogInformation("'{ItemName}' is now in the library: hid its discover placeholder {Folder}", itemName, folder);
+        }
+
+        if (!found)
+        {
+            _logger.LogDebug("'{ItemName}' (tmdb {TmdbId}) has no discover placeholder", itemName, tmdbId);
         }
     }
 }
