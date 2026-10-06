@@ -1,60 +1,66 @@
 # JellyShowcase
 
-A Jellyfin plugin that turns your [Seerr](https://seerr.dev) (or Jellyseerr / Overseerr) discover content into a
-browsable Jellyfin library, so users can find new movies and series and request them from any Jellyfin client.
+**Italiano** · [English](README.en.md)
 
-JellyShowcase is a fork of [JellyBridge](https://github.com/kinggeorges12/JellyBridge) by kinggeorges12, with
-these changes:
+Plugin per Jellyfin che trasforma i contenuti "scopri" di [Seerr](https://seerr.dev) (o Jellyseerr / Overseerr) in
+una libreria di Jellyfin da sfogliare, così gli utenti possono trovare nuovi film e serie e richiederli da
+qualsiasi client Jellyfin.
 
-- **Requests stay pending.** Requests are created *as the user* (`X-API-User`), so they follow that user's
-  permissions and quotas and wait for an administrator's approval (in JellyBridge they were created with the
-  admin's permissions and auto-approved).
-- **Authenticated API.** All plugin endpoints require a Jellyfin administrator (in JellyBridge they were
-  reachable without login, including the plugin configuration with the Seerr API key).
-- **"Request" button** on discover items in the web client and web-based apps, showing the live status
-  (pending approval, downloading, available). Favoriting an item (❤️) still works as a request, e.g. on TV apps.
-- **Streaming platforms.** Each item gets the platforms where it is actually available in your region
-  (subscription, free or with ads) as tags and studios, and one collection per platform
-  ("Discover - Netflix", ...), browsable from every client.
-- **Requested items stay visible** in the discover library until the real media arrives in a main library,
-  then the placeholder is hidden automatically.
+JellyShowcase è un fork di [JellyBridge](https://github.com/kinggeorges12/JellyBridge) di kinggeorges12, con
+queste modifiche:
 
-## Origin
+- **Le richieste restano in attesa.** Le richieste vengono create *a nome dell'utente* (`X-API-User`), quindi
+  seguono i suoi permessi e i suoi limiti e aspettano l'approvazione di un amministratore (in JellyBridge
+  venivano create con i permessi dell'amministratore e approvate in automatico).
+- **API protette.** Tutti gli endpoint del plugin richiedono un amministratore di Jellyfin (in JellyBridge erano
+  raggiungibili senza login, compresa la configurazione del plugin con l'API key di Seerr).
+- **Pulsante "Richiedi"** sui titoli della libreria scopri, nel client web e nelle app basate sul web, con lo
+  stato aggiornato (in attesa di approvazione, in download, disponibile). Il ❤️ preferito continua a funzionare
+  come richiesta, per esempio dalle app per TV.
+- **Piattaforme di streaming.** Ogni titolo riceve le piattaforme dove è davvero disponibile nella tua regione
+  (in abbonamento, gratis o con pubblicità) come tag e studio, più una collezione per piattaforma
+  ("Discover - Netflix", …) sfogliabile da tutti i client.
+- **I titoli richiesti restano visibili** nella libreria scopri finché il contenuto vero non arriva in una
+  libreria principale; poi il segnaposto viene nascosto automaticamente.
 
-JellyShowcase starts from **JellyBridge v4.0** by kinggeorges12 and contributors:
+## Origine
+
+JellyShowcase parte da **JellyBridge v4.0** di kinggeorges12 e contributori:
 
 - Repository: https://github.com/kinggeorges12/JellyBridge
-- Commit: [`d8847635`](https://github.com/kinggeorges12/JellyBridge/commit/d8847635bfa138c6762b644b44951cb86bb546f5) – "Release JellyBridge v4.0 - Compatible with Jellyfin v12.0!" (2026-09-08)
-- License: GNU GPL v3.0
+- Commit: [`d8847635`](https://github.com/kinggeorges12/JellyBridge/commit/d8847635bfa138c6762b644b44951cb86bb546f5) – "Release JellyBridge v4.0 - Compatible with Jellyfin v12.0!" (08/09/2026)
+- Licenza: GNU GPL v3.0
 
-The first commit of this repository imports that code unchanged; every later commit is a JellyShowcase
-modification, so `git log` shows exactly what changed from the original. The history of JellyBridge
-itself is in the original repository.
+Il primo commit di questo repository importa quel codice senza modifiche; ogni commit successivo è una modifica
+di JellyShowcase, quindi `git log` mostra esattamente cosa è cambiato rispetto all'originale. La cronologia di
+JellyBridge si trova nel repository originale.
 
-## Requirements
+## Requisiti
 
-- Jellyfin **12.0** or newer
-- Seerr, Jellyseerr or Overseerr, with an API key
-- A folder for the discover library that Jellyfin can read and write
+- Jellyfin **12.0** o successivo
+- Seerr, Jellyseerr o Overseerr, con una API key
+- Una cartella per la libreria scopri, leggibile e scrivibile da Jellyfin
 
-## Installation
+## Installazione
 
-1. In Jellyfin: **Dashboard → Plugins → Repositories → +** and add
+1. In Jellyfin: **Dashboard → Plugin → Repository → +** e aggiungi
    `https://raw.githubusercontent.com/GiuPic/jellyshowcase/main/manifest.json`
-2. Install **JellyShowcase** from the catalog and restart Jellyfin.
-3. Open the plugin page, set the Seerr URL, API key, library folder, region and networks, then create the
-   discover library and run the sync.
+2. Installa **JellyShowcase** dal catalogo e riavvia Jellyfin.
+3. Apri la pagina del plugin, imposta URL e API key di Seerr, cartella della libreria, regione e piattaforme,
+   poi crea la libreria scopri ed esegui la sincronizzazione.
 
-Users must exist in Seerr (import them from Jellyfin in Seerr's user settings) to request from the button.
+Per usare il pulsante gli utenti devono esistere anche in Seerr (si importano da Jellyfin nelle impostazioni
+utenti di Seerr).
 
-## Building
+## Compilazione
 
-`./build.sh` builds the plugin with the .NET 10 SDK in Docker. `./build.sh --install` also copies it into a
-local Jellyfin (set `PLUGINS_DIR` and `CONTAINER` in a `.build.env` file). `./release.sh "notes"` publishes a
-GitHub release and updates `manifest.json`.
+`./build.sh` compila il plugin con il .NET 10 SDK in Docker. `./build.sh --install` lo copia anche in un Jellyfin
+locale (imposta `PLUGINS_DIR` e `CONTAINER` in un file `.build.env`). `./release.sh "note"` pubblica una Release
+su GitHub e aggiorna `manifest.json`.
 
-The documentation of the features inherited from JellyBridge is in [README.JellyBridge.md](README.JellyBridge.md).
+La documentazione delle funzioni ereditate da JellyBridge è in [README.JellyBridge.md](README.JellyBridge.md)
+(in inglese).
 
-## License
+## Licenza
 
-GNU General Public License v3.0, like the original project. See [LICENSE](LICENSE).
+GNU General Public License v3.0, come il progetto originale. Vedi [LICENSE](LICENSE).
