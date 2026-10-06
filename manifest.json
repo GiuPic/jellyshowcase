@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/GiuPic/jellyshowcase/main/Screenshots/Icon.svg",
     "versions": [
       {
+        "version": "1.2.1.0",
+        "changelog": "Fix: discover placeholders are now hidden as soon as the requested movie or series arrives in a main library.",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/GiuPic/jellyshowcase/releases/download/v1.2.1.0/jellyshowcase_1.2.1.0.zip",
+        "checksum": "7e3472daf87a4206addb7ee6baed367f",
+        "timestamp": "2026-10-06T14:05:08Z"
+      },
+      {
         "version": "1.2.0.0",
         "changelog": "First public release: requests created as the user (pending approval), authenticated plugin API, Request button in the web client (English/Italian), streaming platforms as tags, studios and collections, requested items kept visible until available.",
         "targetAbi": "12.0.0.0",
