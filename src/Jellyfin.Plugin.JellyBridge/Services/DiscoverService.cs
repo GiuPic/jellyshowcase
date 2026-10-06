@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Jellyfin.Plugin.JellyBridge.BridgeModels;
 using Jellyfin.Plugin.JellyBridge.JellyseerrModel;
 using Jellyfin.Plugin.JellyBridge.JellyseerrModel.Server;
@@ -111,7 +112,7 @@ public class DiscoverService
     #endregion
 
     /// <summary>
-    /// Sets Providers on every item: the subscription platforms where it is really available in the
+    /// Sets Providers on every item: the streaming platforms (subscription, free or with ads) where it is really available in the
     /// watch region, according to the TMDB data exposed by Jellyseerr. Only the configured networks are
     /// kept, in their configured order. Items sharing an id (one per network) get the same list.
     /// </summary>
@@ -135,10 +136,13 @@ public class DiscoverService
                 {
                     foreach (var r in regions.EnumerateArray())
                     {
-                        if (r.TryGetProperty("iso_3166_1", out var iso) && iso.GetString() == region
-                            && r.TryGetProperty("flatrate", out var flatrate))
+                        if (r.TryGetProperty("iso_3166_1", out var iso) && iso.GetString() == region)
                         {
-                            providers = flatrate.EnumerateArray()
+                            // Subscription plus free/ad-supported offers (RaiPlay, Mediaset Infinity, ...).
+                            var offers = new[] { "flatrate", "free", "ads" }
+                                .Where(k => r.TryGetProperty(k, out var o) && o.ValueKind == JsonValueKind.Array)
+                                .SelectMany(k => r.GetProperty(k).EnumerateArray());
+                            providers = offers
                                 .Select(p => (Id: p.GetProperty("id").GetInt32(), Name: p.TryGetProperty("name", out var n) ? n.GetString() : null))
                                 .Where(p => order.Count == 0 || order.ContainsKey(p.Id))
                                 .OrderBy(p => order.TryGetValue(p.Id, out var o) ? o : int.MaxValue)
