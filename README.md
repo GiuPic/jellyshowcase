@@ -19,6 +19,18 @@ these changes:
 - **Requested items stay visible** in the discover library until the real media arrives in a main library,
   then the placeholder is hidden automatically.
 
+## Origin
+
+JellyShowcase starts from **JellyBridge v4.0** by kinggeorges12 and contributors:
+
+- Repository: https://github.com/kinggeorges12/JellyBridge
+- Commit: [`d8847635`](https://github.com/kinggeorges12/JellyBridge/commit/d8847635bfa138c6762b644b44951cb86bb546f5) – "Release JellyBridge v4.0 - Compatible with Jellyfin v12.0!" (2026-09-08)
+- License: GNU GPL v3.0
+
+The first commit of this repository imports that code unchanged; every later commit is a JellyShowcase
+modification, so `git log` shows exactly what changed from the original. The history of JellyBridge
+itself is in the original repository.
+
 ## Requirements
 
 - Jellyfin **12.0** or newer
