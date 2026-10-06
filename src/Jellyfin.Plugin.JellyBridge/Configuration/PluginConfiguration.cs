@@ -62,6 +62,7 @@ public class PluginConfiguration : BasePluginConfiguration
         { nameof(ExcludeFromMainLibraries), true },
         { nameof(ResponsiveFavoriteRequests), true },
         { nameof(RemoveRequestedFromFavorites), false },
+        { nameof(KeepRequestedUntilAvailable), true },
         { nameof(UserPermissionRequest4k), true },
         { nameof(RequestFirstSeason), false },
         { nameof(UseMixedMediaLibrary), true },
@@ -185,6 +186,12 @@ public class PluginConfiguration : BasePluginConfiguration
     /// When enabled, remove items from all users' favorites after creating a request in Jellyseerr.
     /// </summary>
     public bool? RemoveRequestedFromFavorites { get; set; }
+
+    /// <summary>
+    /// When enabled, requested items stay in the discover library (showing their request status)
+    /// and are hidden only when the real media arrives in a main library.
+    /// </summary>
+    public bool? KeepRequestedUntilAvailable { get; set; }
 
     /// <summary>
     /// When enabled, requests will use the 4k permissions of the user, rather than requesting the default non-4k content.

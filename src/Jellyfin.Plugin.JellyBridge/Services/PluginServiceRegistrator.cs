@@ -61,6 +61,7 @@ namespace Jellyfin.Plugin.JellyBridge.Services
             
             // Register hosted services
             serviceCollection.AddHostedService<FavoriteEventHandler>();
+            serviceCollection.AddHostedService<ShowcaseArrivalHandler>();
 
             // Register controllers (organized by configuration page sections)
             serviceCollection.AddScoped<Controllers.PluginConfigurationController>();
