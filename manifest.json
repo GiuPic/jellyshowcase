@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "3797d820-4353-4556-9cd9-b43c40777ae9",
+    "name": "JellyShowcase",
+    "description": "Browse and request Seerr discover content from any Jellyfin client.",
+    "overview": "Discover library from Seerr with request button, streaming platforms and collections.",
+    "owner": "GiuPic",
+    "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/GiuPic/jellyshowcase/main/Screenshots/Icon.svg",
+    "versions": [
+      {
+        "version": "1.2.0.0",
+        "changelog": "First public release: requests created as the user (pending approval), authenticated plugin API, Request button in the web client (English/Italian), streaming platforms as tags, studios and collections, requested items kept visible until available.",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/GiuPic/jellyshowcase/releases/download/v1.2.0.0/jellyshowcase_1.2.0.0.zip",
+        "checksum": "a4067b42367689d260799d46fe53014a",
+        "timestamp": "2026-10-06T12:52:30Z"
+      }
+    ]
+  }
+]
