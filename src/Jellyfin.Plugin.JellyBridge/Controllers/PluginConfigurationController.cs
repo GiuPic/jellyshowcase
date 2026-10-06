@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.JellyBridge.Configuration;
@@ -9,6 +10,7 @@ using static Jellyfin.Plugin.JellyBridge.BridgeModels.BridgeConfiguration;
 
 namespace Jellyfin.Plugin.JellyBridge.Controllers
 {
+    [Authorize(Policy = "RequiresElevation")]
     [ApiController]
     [Route("JellyBridge")]
     public class PluginConfigurationController : ControllerBase

@@ -3,11 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.JellyBridge.Services;
 using Jellyfin.Plugin.JellyBridge.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.JellyBridge.Controllers
 {
+    [Authorize(Policy = "RequiresElevation")]
     [ApiController]
     [Route("JellyBridge")]
     public class CustomizePromoController : ControllerBase

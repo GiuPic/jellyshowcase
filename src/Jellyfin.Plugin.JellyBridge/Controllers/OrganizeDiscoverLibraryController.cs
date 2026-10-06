@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.JellyBridge.Configuration;
@@ -7,6 +8,7 @@ using Jellyfin.Plugin.JellyBridge.Utils;
 
 namespace Jellyfin.Plugin.JellyBridge.Controllers
 {
+    [Authorize(Policy = "RequiresElevation")]
     [ApiController]
     [Route("JellyBridge")]
     public class OrganizeDiscoverLibraryController : ControllerBase

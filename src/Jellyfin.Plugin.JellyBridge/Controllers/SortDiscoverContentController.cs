@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.JellyBridge.Configuration;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace Jellyfin.Plugin.JellyBridge.Controllers
 {
+    [Authorize(Policy = "RequiresElevation")]
     [ApiController]
     [Route("JellyBridge")]
     public class SortDiscoverContentController : ControllerBase
