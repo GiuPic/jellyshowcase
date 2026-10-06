@@ -64,6 +64,9 @@ namespace Jellyfin.Plugin.JellyBridge.Services
             serviceCollection.AddHostedService<FavoriteEventHandler>();
             serviceCollection.AddHostedService<ShowcaseArrivalHandler>();
 
+            // Web client script for the "Richiedi" button, injected into index.html at request time
+            serviceCollection.AddSingleton<Microsoft.AspNetCore.Hosting.IStartupFilter, ShowcaseScriptStartupFilter>();
+
             // Register controllers (organized by configuration page sections)
             serviceCollection.AddScoped<Controllers.PluginConfigurationController>();
             serviceCollection.AddScoped<Controllers.GeneralSettingsController>();
@@ -74,6 +77,7 @@ namespace Jellyfin.Plugin.JellyBridge.Services
             serviceCollection.AddScoped<Controllers.CustomizePromoController>();
             serviceCollection.AddScoped<Controllers.SortDiscoverContentController>();
             serviceCollection.AddScoped<Controllers.AdvancedSettingsController>();
+            serviceCollection.AddScoped<Controllers.RequestController>();
         }
     }
 }
