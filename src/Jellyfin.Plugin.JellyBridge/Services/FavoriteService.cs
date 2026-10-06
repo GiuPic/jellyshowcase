@@ -117,7 +117,6 @@ public class FavoriteService
                 {
                     ["mediaType"] = mediaType,
                     ["mediaId"] = tmdbId.Value,
-                    ["userId"] = user.Id,
                 };
 
                 if(userPermissionRequest4k)
@@ -128,7 +127,9 @@ public class FavoriteService
                 _logger.LogTrace("Processing Jellyseerr bridge item: {ItemName} (TMDB ID: {TmdbId}) for user {UserName}", 
                     item.Name, tmdbId.Value, username);
                 
-                var requestResult = await _apiService.CallEndpointAsync(JellyseerrEndpoint.CreateRequest, parameters: requestParams);
+                // Act as the user (X-API-User) instead of passing "userId": Jellyseerr decides auto-approval
+                // from the caller's permissions, so sending userId as the admin API key auto-approves every request.
+                var requestResult = await _apiService.CallEndpointAsync(JellyseerrEndpoint.CreateRequest, parameters: requestParams, actAsUserId: user.Id);
                 var request = requestResult as JellyseerrMediaRequest;
                 
                 // Check if request is valid by verifying it has an ID (successful requests always have an ID > 0)

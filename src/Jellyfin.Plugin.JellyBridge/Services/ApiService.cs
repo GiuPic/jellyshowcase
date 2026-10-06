@@ -307,8 +307,9 @@ public class ApiService
         /// <param name="method">HTTP method (defaults to GET)</param>
         /// <param name="parameters">Optional query parameters</param>
         /// <param name="templateValues">Optional template values for URL placeholders</param>
+        /// <param name="actAsUserId">Optional Jellyseerr user ID to act as (X-API-User), so the call uses that user's permissions</param>
         /// <returns>Configured HttpRequestMessage</returns>
-        public static HttpRequestMessage BuildEndpointRequest(string baseUrl, JellyseerrEndpoint endpoint, string apiKey, HttpMethod? method = null, Dictionary<string, object>? parameters = null, Dictionary<string, string>? templateValues = null)
+        public static HttpRequestMessage BuildEndpointRequest(string baseUrl, JellyseerrEndpoint endpoint, string apiKey, HttpMethod? method = null, Dictionary<string, object>? parameters = null, Dictionary<string, string>? templateValues = null, int? actAsUserId = null)
         {
             var httpMethod = method ?? GetEndpoint(endpoint).Method;
             var isBodyMethod = httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put;
@@ -319,6 +320,10 @@ public class ApiService
             var requestMessage = new HttpRequestMessage(httpMethod, url);
             requestMessage.Headers.Add("X-Api-Key", apiKey);
             requestMessage.Headers.Add("Accept", "application/json");
+            if (actAsUserId.HasValue)
+            {
+                requestMessage.Headers.Add("X-API-User", actAsUserId.Value.ToString());
+            }
             
             if (isBodyMethod && parameters != null)
             {
@@ -503,12 +508,14 @@ public class ApiService
     /// </summary>
     /// <param name="endpoint">The endpoint to call</param>
     /// <param name="config">Optional plugin configuration (uses default if not provided)</param>
+    /// <param name="actAsUserId">Optional Jellyseerr user ID to act as; the request then runs with that user's permissions</param>
     /// <returns>The response in the correct type for the endpoint</returns>
     public async Task<object> CallEndpointAsync(
         JellyseerrEndpoint endpoint, 
         PluginConfiguration? config = null,
         Dictionary<string, object>? parameters = null,
-        Dictionary<string, string>? templates = null
+        Dictionary<string, string>? templates = null,
+        int? actAsUserId = null
     ) {
         // Use default plugin config if none provided
         config ??= Plugin.GetConfiguration();
@@ -564,7 +571,7 @@ public class ApiService
                         pageParameters = queryParameters;
                     }
                     
-                    var pageRequestMessage = JellyseerrUrlBuilder.BuildEndpointRequest(config.JellyseerrUrl, endpoint, config.ApiKey, parameters: pageParameters, templateValues: templateValues);
+                    var pageRequestMessage = JellyseerrUrlBuilder.BuildEndpointRequest(config.JellyseerrUrl, endpoint, config.ApiKey, parameters: pageParameters, templateValues: templateValues, actAsUserId: actAsUserId);
                     
                     // Debug: Log the complete URL being used
                     _logger.LogDebug("Making API request to URL: {Url}", pageRequestMessage.RequestUri);
@@ -634,7 +641,7 @@ public class ApiService
             else
             {
                 // Non-paginated endpoints - single request
-                var requestMessage = JellyseerrUrlBuilder.BuildEndpointRequest(config.JellyseerrUrl, endpoint, config.ApiKey, parameters: queryParameters, templateValues: templateValues);
+                var requestMessage = JellyseerrUrlBuilder.BuildEndpointRequest(config.JellyseerrUrl, endpoint, config.ApiKey, parameters: queryParameters, templateValues: templateValues, actAsUserId: actAsUserId);
                 _logger.LogDebug("Request URL: {Url}", requestMessage.RequestUri);
                 
                 // Make the API request
