@@ -32,3 +32,5 @@ temp/
 *.pdb
 *.tmp
 *.log
+# Impostazioni locali di build.sh
+.build.env

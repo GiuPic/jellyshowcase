@@ -64,7 +64,7 @@ public class PluginConfiguration : BasePluginConfiguration
         { nameof(RemoveRequestedFromFavorites), false },
         { nameof(KeepRequestedUntilAvailable), true },
         { nameof(EnablePlatformCollections), true },
-        { nameof(PlatformCollectionPrefix), "Vetrina - " },
+        { nameof(PlatformCollectionPrefix), "Discover - " },
         { nameof(UserPermissionRequest4k), true },
         { nameof(RequestFirstSeason), false },
         { nameof(UseMixedMediaLibrary), true },
@@ -201,7 +201,7 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool? EnablePlatformCollections { get; set; }
 
     /// <summary>
-    /// Prefix of the platform collection names, e.g. "Vetrina - " gives "Vetrina - Netflix".
+    /// Prefix of the platform collection names, e.g. "Discover - " gives "Discover - Netflix".
     /// </summary>
     public string? PlatformCollectionPrefix { get; set; }
 

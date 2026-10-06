@@ -7,8 +7,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 JELLYFIN_VERSION="12.0.0"   # versione dei pacchetti NuGet Jellyfin.Controller/Model (ABI minima)
 PROJECT="src/Jellyfin.Plugin.JellyBridge/JellyBridge.csproj"
-PLUGINS_DIR="/path/to/jellyfin/config/plugins"
-CONTAINER="jellyfin"
+# Impostazioni locali per --install (file non versionato), per esempio:
+#   PLUGINS_DIR=/percorso/config/jellyfin/plugins
+#   CONTAINER=jellyfin
+[ -f "$ROOT/.build.env" ] && . "$ROOT/.build.env"
+CONTAINER="${CONTAINER:-jellyfin}"
 
 docker run --rm \
   -v "$ROOT":/src -w /src \
@@ -23,6 +26,7 @@ NAME="$(grep -oP '(?<=public override string Name => ")[^"]+' "$ROOT/src/Jellyfi
 echo "Compilato: $DLL (v$VERSION)"
 
 [ "${1:-}" = "--install" ] || exit 0
+: "${PLUGINS_DIR:?imposta PLUGINS_DIR in .build.env}"
 
 docker stop "$CONTAINER" >/dev/null
 rm -rf "$PLUGINS_DIR/${NAME}_"*

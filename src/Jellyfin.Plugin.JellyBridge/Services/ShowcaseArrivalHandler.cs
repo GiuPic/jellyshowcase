@@ -108,7 +108,7 @@ public sealed class ShowcaseArrivalHandler : IHostedService
 
             // Remove only this placeholder from the database (files stay on disk): instant, no library scan.
             var placeholder = isMovie
-                ? _libraryManager.FindByPath(Path.Combine(folder, "movie.mp4"), false)
+                ? _libraryManager.FindByPath(Path.Combine(folder, PlaceholderVideoGenerator.MoviePlaceholderFileName), false)
                 : _libraryManager.FindByPath(folder, true);
             if (placeholder != null)
             {

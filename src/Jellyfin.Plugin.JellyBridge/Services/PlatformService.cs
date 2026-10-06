@@ -50,7 +50,7 @@ public class PlatformService
             }
 
             var jfItem = item is JellyseerrMovie
-                ? _libraryManager.FindByPath(Path.Combine(dir, "movie.mp4"), false)
+                ? _libraryManager.FindByPath(Path.Combine(dir, PlaceholderVideoGenerator.MoviePlaceholderFileName), false)
                 : _libraryManager.FindByPath(dir, true);
             if (jfItem == null)
             {

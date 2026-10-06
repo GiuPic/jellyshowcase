@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.JellyBridge.Controllers;
 
 /// <summary>
-/// Endpoints behind the "Richiedi" button that the web client script adds to discover items:
+/// Endpoints behind the "Request" button that the web client script adds to discover items:
 /// the request status of an item and the request itself, made as the logged-in user (X-API-User),
 /// so it follows that user's permissions and stays pending until an admin approves it.
 /// </summary>
@@ -80,7 +80,7 @@ public class RequestController : ControllerBase
         var media = ResolveShowcaseItem(itemId);
         if (media == null)
         {
-            return BadRequest(new { message = "Questo titolo non è nella Vetrina." });
+            return BadRequest(new { code = "notShowcase", message = "This item is not in the discover library." });
         }
 
         var userId = GetJellyfinUserId();
@@ -88,7 +88,7 @@ public class RequestController : ControllerBase
         var seerrUser = users.FirstOrDefault(u => Guid.TryParse(u.JellyfinUserGuid, out var g) && g == userId);
         if (seerrUser == null)
         {
-            return BadRequest(new { message = "Il tuo utente non è collegato a Seerr: chiedi all'amministratore." });
+            return BadRequest(new { code = "notLinked", message = "Your user is not linked to Seerr: ask the administrator." });
         }
 
         var parameters = new Dictionary<string, object>
@@ -107,7 +107,7 @@ public class RequestController : ControllerBase
         if (result is not JellyseerrMediaRequest { Id: > 0 })
         {
             _logger.LogWarning("Request from the web button failed: {Kind} {TmdbId} by {User}", media.Value.kind, media.Value.tmdbId, seerrUser.DisplayName);
-            return BadRequest(new { message = "Richiesta non riuscita: forse hai raggiunto il limite di richieste. Riprova più tardi." });
+            return BadRequest(new { code = "failed", message = "Request failed: you may have reached your request limit. Try again later." });
         }
         _logger.LogInformation("Request created from the web button: {Kind} {TmdbId} by {User}", media.Value.kind, media.Value.tmdbId, seerrUser.DisplayName);
 

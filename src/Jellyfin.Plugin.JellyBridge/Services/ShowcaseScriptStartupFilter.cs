@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace Jellyfin.Plugin.JellyBridge.Services;
 
 /// <summary>
-/// Adds the JellyShowcase client script (the "Richiedi" button) to the web client's index.html at
+/// Adds the JellyShowcase client script (the "Request" button) to the web client's index.html at
 /// request time, without touching jellyfin-web on disk. Same approach as Jellyfin Enhanced:
 /// buffer the uncompressed index response and insert a script tag before &lt;/body&gt;.
 /// </summary>

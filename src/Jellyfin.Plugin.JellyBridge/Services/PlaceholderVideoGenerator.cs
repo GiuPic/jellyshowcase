@@ -48,6 +48,11 @@ public class PlaceholderVideoGenerator
     public static readonly string AssetExtension = ".mp4";
     public static readonly string AssetSearchPattern = "*" + AssetExtension;
 
+    /// <summary>
+    /// File name of the placeholder video inside a movie folder (e.g. "movie.mp4").
+    /// </summary>
+    public static string MoviePlaceholderFileName => Path.GetFileNameWithoutExtension(MovieAsset) + AssetExtension;
+
     public PlaceholderVideoGenerator(ILogger<PlaceholderVideoGenerator> logger, IMediaEncoder mediaEncoder)
     {
         _logger = new DebugLogger<PlaceholderVideoGenerator>(logger);
