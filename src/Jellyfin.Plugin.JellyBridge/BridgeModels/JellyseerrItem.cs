@@ -197,6 +197,12 @@ public interface IJellyseerrItem
     /// </summary>
     [JsonIgnore]
     string? NetworkTag { get; set; }
+
+    /// <summary>
+    /// Streaming platforms where the item is available (display names).
+    /// </summary>
+    [JsonIgnore]
+    List<string>? Providers { get; set; }
     
     /// <summary>
     /// The network tag for the media item.

@@ -63,6 +63,8 @@ public class PluginConfiguration : BasePluginConfiguration
         { nameof(ResponsiveFavoriteRequests), true },
         { nameof(RemoveRequestedFromFavorites), false },
         { nameof(KeepRequestedUntilAvailable), true },
+        { nameof(EnablePlatformCollections), true },
+        { nameof(PlatformCollectionPrefix), "Vetrina - " },
         { nameof(UserPermissionRequest4k), true },
         { nameof(RequestFirstSeason), false },
         { nameof(UseMixedMediaLibrary), true },
@@ -192,6 +194,16 @@ public class PluginConfiguration : BasePluginConfiguration
     /// and are hidden only when the real media arrives in a main library.
     /// </summary>
     public bool? KeepRequestedUntilAvailable { get; set; }
+
+    /// <summary>
+    /// When enabled, keeps one Jellyfin collection per streaming platform with the discover items.
+    /// </summary>
+    public bool? EnablePlatformCollections { get; set; }
+
+    /// <summary>
+    /// Prefix of the platform collection names, e.g. "Vetrina - " gives "Vetrina - Netflix".
+    /// </summary>
+    public string? PlatformCollectionPrefix { get; set; }
 
     /// <summary>
     /// When enabled, requests will use the 4k permissions of the user, rather than requesting the default non-4k content.

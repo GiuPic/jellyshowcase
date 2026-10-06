@@ -110,6 +110,62 @@ public class DiscoverService
 
     #endregion
 
+    /// <summary>
+    /// Sets Providers on every item: the subscription platforms where it is really available in the
+    /// watch region, according to the TMDB data exposed by Jellyseerr. Only the configured networks are
+    /// kept, in their configured order. Items sharing an id (one per network) get the same list.
+    /// </summary>
+    public async Task FetchProvidersAsync(List<IJellyseerrItem> items)
+    {
+        var region = Plugin.GetConfigOrDefault<string>(nameof(PluginConfiguration.Region));
+        var networks = Plugin.GetConfigOrDefault<List<JellyseerrNetwork>>(nameof(PluginConfiguration.NetworkMap)) ?? new();
+        var order = networks.Select((n, i) => (n.Id, i)).GroupBy(x => x.Id).ToDictionary(g => g.Key, g => g.First().i);
+
+        using var gate = new SemaphoreSlim(4);
+        var groups = items.GroupBy(i => (i is JellyseerrMovie ? "movie" : "tv", i.Id)).ToList();
+        var tasks = groups.Select(async group =>
+        {
+            await gate.WaitAsync();
+            try
+            {
+                var (kind, id) = group.Key;
+                using var doc = await _apiService.GetJsonAsync($"/api/v1/{kind}/{id}");
+                var providers = new List<string>();
+                if (doc != null && doc.RootElement.TryGetProperty("watchProviders", out var regions))
+                {
+                    foreach (var r in regions.EnumerateArray())
+                    {
+                        if (r.TryGetProperty("iso_3166_1", out var iso) && iso.GetString() == region
+                            && r.TryGetProperty("flatrate", out var flatrate))
+                        {
+                            providers = flatrate.EnumerateArray()
+                                .Select(p => (Id: p.GetProperty("id").GetInt32(), Name: p.TryGetProperty("name", out var n) ? n.GetString() : null))
+                                .Where(p => order.Count == 0 || order.ContainsKey(p.Id))
+                                .OrderBy(p => order.TryGetValue(p.Id, out var o) ? o : int.MaxValue)
+                                .Select(p => PlatformNames.Display(p.Id, p.Name))
+                                .Distinct()
+                                .ToList();
+                        }
+                    }
+                }
+                foreach (var item in group)
+                {
+                    item.Providers = providers;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not read streaming providers for {Kind} {Id}", group.Key.Item1, group.Key.Id);
+            }
+            finally
+            {
+                gate.Release();
+            }
+        });
+        await Task.WhenAll(tasks);
+        _logger.LogDebug("Fetched streaming providers for {Count} unique items", groups.Count);
+    }
+
     #region Created
     
     /// <summary>

@@ -102,6 +102,9 @@ public partial class SyncService
             _logger.LogDebug("Step 2: Filtered {OriginalCount} items to {UniqueCount} unique items across networks", 
                 discoverMedia.Count, uniqueDiscoverMedia.Count);
 
+            // Step 2b: Real streaming availability for every item (tags, studios and collections)
+            await _discoverService.FetchProvidersAsync(discoverMedia);
+
             // Step 3: Process movies and TV shows
             _logger.LogDebug("Step 3: 📺 Creating Jellyfin folders and metadata for movies and TV shows from Jellyseerr...");
             // Add all folders, then create ignore files for duplicates later

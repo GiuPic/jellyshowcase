@@ -58,6 +58,7 @@ namespace Jellyfin.Plugin.JellyBridge.Services
             
             // Register placeholder video generator as transient to avoid early initialization
             serviceCollection.AddTransient<PlaceholderVideoGenerator>();
+            serviceCollection.AddTransient<PlatformService>();
             
             // Register hosted services
             serviceCollection.AddHostedService<FavoriteEventHandler>();

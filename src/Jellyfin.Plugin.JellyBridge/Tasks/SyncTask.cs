@@ -134,6 +134,8 @@ public class SyncTask : IScheduledTask
                         _logger.LogDebug("Cleanup result: {Result}", cleanupResult.ToString());
 
                     await refreshService.ApplyRefreshAsync( [syncToResult, syncFromResult, cleanupResult] );
+                    // Tag the (new) placeholders with their platforms once Jellyfin has scanned them.
+                    _taskManager.QueueScheduledTask<PlatformTask>();
                 } catch (Exception ex) {
                     _logger.LogError(ex, "Error applying refresh operations");
                 } finally {

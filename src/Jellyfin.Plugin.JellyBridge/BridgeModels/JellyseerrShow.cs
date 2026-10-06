@@ -113,6 +113,12 @@ public class JellyseerrShow
     public string? NetworkTag { get; set; }
 
     /// <summary>
+    /// Streaming platforms (subscription) where the item is available in the watch region.
+    /// </summary>
+    [JsonPropertyName("providers")]
+    public List<string>? Providers { get; set; }
+
+    /// <summary>
     /// The network ID for the media item.
     /// </summary>
     [JsonPropertyName("networkId")]
@@ -191,7 +197,14 @@ public class JellyseerrShow
         xml.AppendLine($"  <tmdbid>{Id}</tmdbid>");
         
         // Add network tag if available
-        if (!string.IsNullOrEmpty(NetworkTag))
+        if (Providers is { Count: > 0 })
+        {
+            foreach (var provider in Providers)
+            {
+                xml.AppendLine($"  <tag>{System.Security.SecurityElement.Escape(provider)}</tag>");
+            }
+        }
+        else if (!string.IsNullOrEmpty(NetworkTag))
         {
             xml.AppendLine($"  <tag>{System.Security.SecurityElement.Escape(NetworkTag)}</tag>");
         }

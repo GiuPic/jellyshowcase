@@ -378,6 +378,24 @@ public class ApiService
     }
 
     /// <summary>
+    /// GET on an arbitrary Jellyseerr API path (e.g. "/api/v1/movie/603"), returning the parsed JSON
+    /// or null on failure. For endpoints that have no typed model in this plugin.
+    /// </summary>
+    public async Task<JsonDocument?> GetJsonAsync(string path, int? actAsUserId = null)
+    {
+        var config = Plugin.GetConfiguration();
+        using var request = new HttpRequestMessage(HttpMethod.Get, config.JellyseerrUrl.TrimEnd('/') + path);
+        request.Headers.Add("X-Api-Key", config.ApiKey);
+        request.Headers.Add("Accept", "application/json");
+        if (actAsUserId.HasValue)
+        {
+            request.Headers.Add("X-API-User", actAsUserId.Value.ToString());
+        }
+        var content = await MakeApiRequestAsync(request, config);
+        return string.IsNullOrEmpty(content) ? null : JsonDocument.Parse(content);
+    }
+
+    /// <summary>
     /// Makes an HTTP request to the Jellyseerr API with retry logic, timeout, and debug logging.
     /// Returns the response content as a string, or null if the request failed.
     /// </summary>
