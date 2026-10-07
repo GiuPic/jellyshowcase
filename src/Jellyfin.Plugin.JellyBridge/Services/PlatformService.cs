@@ -36,22 +36,11 @@ public class PlatformService
     {
         var networks = Plugin.GetConfigOrDefault<List<JellyseerrNetwork>>(nameof(PluginConfiguration.NetworkMap)) ?? new();
         var networkNames = networks.Select(n => n.Name).ToList();
-        var (movies, shows) = await _metadataService.ReadMetadataAsync();
-
         var members = new Dictionary<string, List<Guid>>(StringComparer.OrdinalIgnoreCase);
         var updated = 0;
-        foreach (var item in movies.Cast<IJellyseerrItem>().Concat(shows))
+        foreach (var (item, jfItem) in await ResolvePlaceholdersAsync())
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var dir = _metadataService.GetJellyBridgeItemDirectory(item);
-            if (File.Exists(Path.Combine(dir, BridgeService.IgnoreFileName)))
-            {
-                continue;
-            }
-
-            var jfItem = item is JellyseerrMovie
-                ? _libraryManager.FindByPath(Path.Combine(dir, PlaceholderVideoGenerator.MoviePlaceholderFileName), false)
-                : _libraryManager.FindByPath(dir, true);
             if (jfItem == null)
             {
                 continue;
@@ -82,6 +71,63 @@ public class PlatformService
 
         _logger.LogInformation("Platforms applied: {Updated} items updated, {Collections} collections in sync", updated, collections);
         return (updated, collections);
+    }
+
+    /// <summary>
+    /// Visible discover placeholders (no .ignore) with their Jellyfin item, or null if Jellyfin has not indexed it yet.
+    /// </summary>
+    private async Task<List<(IJellyseerrItem item, BaseItem? jfItem)>> ResolvePlaceholdersAsync()
+    {
+        var (movies, shows) = await _metadataService.ReadMetadataAsync();
+        var result = new List<(IJellyseerrItem, BaseItem?)>();
+        foreach (var item in movies.Cast<IJellyseerrItem>().Concat(shows))
+        {
+            var dir = _metadataService.GetJellyBridgeItemDirectory(item);
+            if (File.Exists(Path.Combine(dir, BridgeService.IgnoreFileName)))
+            {
+                continue;
+            }
+            var jfItem = item is JellyseerrMovie
+                ? _libraryManager.FindByPath(Path.Combine(dir, PlaceholderVideoGenerator.MoviePlaceholderFileName), false)
+                : _libraryManager.FindByPath(dir, true);
+            result.Add((item, jfItem));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Waits until Jellyfin has indexed the discover placeholders created by the last sync: all of them,
+    /// or no progress for <paramref name="stallLimit"/>, or <paramref name="timeout"/> elapsed.
+    /// Without this, a sync with many new titles would be tagged before Jellyfin knows the new items.
+    /// </summary>
+    public async Task WaitForPlaceholdersAsync(TimeSpan timeout, TimeSpan stallLimit, CancellationToken cancellationToken)
+    {
+        var poll = TimeSpan.FromSeconds(30);
+        var deadline = DateTime.UtcNow + timeout;
+        var lastIndexed = -1;
+        var stalledSince = DateTime.UtcNow;
+        while (true)
+        {
+            var placeholders = await ResolvePlaceholdersAsync();
+            var indexed = placeholders.Count(p => p.jfItem != null);
+            if (indexed >= placeholders.Count)
+            {
+                _logger.LogInformation("All {Count} discover placeholders are indexed", placeholders.Count);
+                return;
+            }
+            if (indexed != lastIndexed)
+            {
+                lastIndexed = indexed;
+                stalledSince = DateTime.UtcNow;
+            }
+            if (DateTime.UtcNow - stalledSince >= stallLimit || DateTime.UtcNow >= deadline)
+            {
+                _logger.LogWarning("Applying platforms with {Indexed}/{Total} discover placeholders indexed", indexed, placeholders.Count);
+                return;
+            }
+            _logger.LogDebug("Waiting for Jellyfin to index discover placeholders: {Indexed}/{Total}", indexed, placeholders.Count);
+            await Task.Delay(poll, cancellationToken);
+        }
     }
 
     /// <summary>

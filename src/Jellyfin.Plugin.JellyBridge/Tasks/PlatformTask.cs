@@ -43,6 +43,9 @@ public class PlatformTask : IScheduledTask
         // background scan queued by the sync a moment to start, then wait for it to finish.
         await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
         await refreshService.WaitForTaskRefreshLibrary();
+        progress.Report(5);
+        // The bridge library refresh runs outside the scheduled-task queue: wait for the placeholders themselves.
+        await platformService.WaitForPlaceholdersAsync(TimeSpan.FromMinutes(20), TimeSpan.FromMinutes(2), cancellationToken);
         progress.Report(10);
         await platformService.ApplyAsync(cancellationToken);
         progress.Report(100);
